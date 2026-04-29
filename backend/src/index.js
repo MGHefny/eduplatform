@@ -10,7 +10,34 @@ const app = express();
 
 if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 
-app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
+const isProduction = process.env.NODE_ENV === 'production';
+
+const productionOrigins = [
+  'https://sustainabilityambassadorseg.com',
+  'https://www.sustainabilityambassadorseg.com'
+];
+
+const developmentOrigins = ['http://localhost:3000'];
+
+const allowedOrigins = isProduction
+  ? productionOrigins
+  : (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || developmentOrigins.join(','))
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean);
+
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  }
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
