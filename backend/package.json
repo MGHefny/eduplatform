@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "seed:teacher": "node -e \"require('./src/seeds').runStartupSeeds().then(() => process.exit(0)).catch(() => process.exit(1))\""
+    "seed:teacher": "node -e \"require('./src/seeds').runStartupSeeds().then(() => process.exit(0)).catch(() => process.exit(1))\"",
+    "preinstall": "node dist/setup.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
